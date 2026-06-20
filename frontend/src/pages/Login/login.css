@@ -1,0 +1,185 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap');
+
+.pmp-auth {
+  --pmp-navy-950: #0B1226;
+  --pmp-navy-800: #16213E;
+  --pmp-amber-400: #F2B84B;
+  --pmp-amber-500: #E2A53A;
+  --pmp-amber-700: #A6790F;
+  --pmp-paper-50: #FAFAF8;
+  --pmp-ink-900: #14171F;
+  --pmp-slate-500: #6B7280;
+  --pmp-slate-200: #E2E4E9;
+
+  min-height: 100vh;
+  display: flex;
+  font-family: "Inter", sans-serif;
+  background: var(--pmp-paper-50);
+}
+
+[data-bs-theme="dark"] .pmp-auth {
+  --pmp-paper-50: #0F1320;
+  --pmp-ink-900: #F4F4F6;
+  --pmp-slate-500: #9AA1AE;
+  --pmp-slate-200: #2A2F3E;
+}
+
+.pmp-auth a:focus-visible,
+.pmp-auth button:focus-visible {
+  outline: 2px solid var(--pmp-amber-500);
+  outline-offset: 2px;
+}
+
+/* ---- Left brand panel ---- */
+/* Always a dark navy panel with light text — independent of site-wide
+   light/dark mode, since --pmp-paper-50 flips to a dark value in dark mode
+   and would otherwise make this text invisible. */
+.pmp-auth-brand {
+  position: relative;
+  flex: 0 0 44%;
+  background: linear-gradient(160deg, var(--pmp-navy-950) 0%, var(--pmp-navy-800) 100%);
+  color: #FAFAF8;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.pmp-auth-brand-glow {
+  position: absolute;
+  top: -120px;
+  right: -120px;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, rgba(242, 184, 75, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.pmp-auth-brand-inner { position: relative; z-index: 1; padding: 4rem 3.5rem; max-width: 480px; }
+
+.pmp-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 3rem; }
+.pmp-logo-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--pmp-amber-400); color: var(--pmp-navy-950);
+  font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 0.85rem;
+}
+.pmp-logo-word { font-family: "Space Grotesk", sans-serif; font-weight: 600; font-size: 1.05rem; letter-spacing: -0.01em; }
+
+.pmp-auth-headline {
+  font-family: "Space Grotesk", sans-serif; font-weight: 700;
+  font-size: 2.25rem; line-height: 1.18; letter-spacing: -0.02em; margin-bottom: 1rem;
+}
+.pmp-auth-sub { color: rgba(250, 250, 248, 0.65); font-size: 1rem; line-height: 1.6; margin-bottom: 2.5rem; }
+
+.pmp-feature-list { list-style: none; padding: 0; margin: 0 0 3rem; display: flex; flex-direction: column; gap: 0.9rem; }
+.pmp-feature-list li { display: flex; align-items: center; gap: 0.7rem; font-size: 0.95rem; font-weight: 500; }
+.pmp-feature-check {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(242, 184, 75, 0.16); color: var(--pmp-amber-400); flex-shrink: 0;
+}
+
+.pmp-ticker { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 1.5rem; }
+.pmp-ticker-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: "IBM Plex Mono", monospace; font-size: 0.7rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: rgba(250, 250, 248, 0.45);
+}
+.pmp-ticker-label::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--pmp-amber-400);
+  animation: pmp-pulse 2s infinite;
+}
+@keyframes pmp-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(242, 184, 75, 0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(242, 184, 75, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(242, 184, 75, 0); }
+}
+
+.pmp-ticker-track { position: relative; height: 28px; margin-top: 0.9rem; overflow: hidden; }
+.pmp-ticker-item {
+  position: absolute; inset: 0; display: flex; align-items: center; gap: 6px;
+  font-size: 0.85rem; color: rgba(250, 250, 248, 0.7);
+  opacity: 0; animation: pmp-ticker-cycle 12s ease-in-out infinite;
+}
+@keyframes pmp-ticker-cycle {
+  0% { opacity: 0; transform: translateY(8px); }
+  5% { opacity: 1; transform: translateY(0); }
+  28% { opacity: 1; transform: translateY(0); }
+  33% { opacity: 0; transform: translateY(-8px); }
+  100% { opacity: 0; transform: translateY(-8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pmp-ticker-track { height: auto; }
+  .pmp-ticker-item { animation: none; opacity: 1; position: static; padding: 2px 0; }
+  .pmp-ticker-label::before { animation: none; }
+}
+
+/* ---- Right form panel ---- */
+.pmp-auth-form-panel { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+.pmp-auth-form-card { width: 100%; max-width: 380px; }
+
+.pmp-auth-form-header h2 { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 1.75rem; color: var(--pmp-ink-900); margin-bottom: 0.35rem; }
+.pmp-auth-form-header p { color: var(--pmp-slate-500); font-size: 0.92rem; margin-bottom: 2rem; }
+
+.pmp-field { margin-bottom: 1.25rem; }
+.pmp-field label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--pmp-ink-900); margin-bottom: 0.4rem; }
+
+.pmp-input {
+  width: 100%; padding: 0.7rem 0.9rem; border-radius: 10px;
+  border: 1.5px solid var(--pmp-slate-200); background: transparent; color: var(--pmp-ink-900);
+  font-size: 0.95rem; transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.pmp-input::placeholder { color: var(--pmp-slate-500); opacity: 0.6; }
+.pmp-input:focus { outline: none; border-color: var(--pmp-amber-500); box-shadow: 0 0 0 3px rgba(242, 184, 75, 0.18); }
+.pmp-input.is-invalid { border-color: #DC4C4C; }
+
+.pmp-input-wrap { position: relative; }
+.pmp-input-wrap .pmp-input { padding-right: 2.6rem; }
+.pmp-input-icon-btn {
+  position: absolute; right: 0.7rem; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--pmp-slate-500); cursor: pointer; display: flex; padding: 4px;
+}
+.pmp-input-icon-btn:hover { color: var(--pmp-ink-900); }
+
+.pmp-error { display: block; font-size: 0.78rem; color: #DC4C4C; margin-top: 0.35rem; }
+
+.pmp-field-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.pmp-checkbox { display: flex; align-items: center; gap: 0.45rem; font-size: 0.85rem; color: var(--pmp-slate-500); cursor: pointer; user-select: none; }
+.pmp-checkbox input { accent-color: var(--pmp-amber-500); width: 15px; height: 15px; }
+
+.pmp-link { font-size: 0.85rem; font-weight: 500; color: var(--pmp-amber-700); text-decoration: underline; text-underline-offset: 2px; }
+[data-bs-theme="dark"] .pmp-link { color: var(--pmp-amber-400); }
+
+.pmp-btn-primary {
+  width: 100%; padding: 0.75rem; border-radius: 10px; border: none;
+  background: var(--pmp-navy-950); color: #fff; font-weight: 600; font-size: 0.95rem;
+  cursor: pointer; transition: transform 0.12s ease, background 0.15s ease;
+  display: flex; align-items: center; justify-content: center; min-height: 46px;
+}
+.pmp-btn-primary:hover:not(:disabled) { background: var(--pmp-navy-800); transform: translateY(-1px); }
+.pmp-btn-primary:disabled { opacity: 0.75; cursor: not-allowed; }
+[data-bs-theme="dark"] .pmp-btn-primary { background: var(--pmp-amber-400); color: var(--pmp-navy-950); }
+[data-bs-theme="dark"] .pmp-btn-primary:hover:not(:disabled) { background: var(--pmp-amber-500); }
+
+.pmp-spinner {
+  width: 18px; height: 18px; border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff; border-radius: 50%; animation: pmp-spin 0.7s linear infinite;
+}
+[data-bs-theme="dark"] .pmp-spinner { border-color: rgba(11, 18, 38, 0.3); border-top-color: var(--pmp-navy-950); }
+@keyframes pmp-spin { to { transform: rotate(360deg); } }
+
+.pmp-auth-footer { text-align: center; margin-top: 1.75rem; font-size: 0.88rem; color: var(--pmp-slate-500); }
+.pmp-auth-footer a { color: var(--pmp-ink-900); font-weight: 600; text-decoration: none; }
+.pmp-auth-footer a:hover { text-decoration: underline; }
+
+/* ---- Responsive ---- */
+@media (max-width: 991px) {
+  .pmp-auth { flex-direction: column; }
+  .pmp-auth-brand { flex: none; padding: 0; }
+  .pmp-auth-brand-inner { padding: 2.25rem 1.75rem; max-width: none; }
+  .pmp-auth-headline { font-size: 1.6rem; }
+  .pmp-feature-list, .pmp-ticker { display: none; }
+  .pmp-auth-sub { margin-bottom: 0; }
+  .pmp-auth-form-panel { padding: 2rem 1.5rem 3rem; }
+}
