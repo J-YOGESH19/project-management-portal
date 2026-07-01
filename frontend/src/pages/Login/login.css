@@ -183,3 +183,9 @@
   .pmp-auth-sub { margin-bottom: 0; }
   .pmp-auth-form-panel { padding: 2rem 1.5rem 3rem; }
 }
+.pmp-register-note {
+  display: flex; align-items: flex-start; gap: 8px;
+  margin-top: 2rem; padding: 0.85rem 1rem;
+  background: rgba(255,255,255,0.06); border-radius: 10px;
+  font-size: 0.82rem; color: rgba(250,250,248,0.6); line-height: 1.5;
+}

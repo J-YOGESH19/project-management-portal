@@ -1,26 +1,35 @@
 import { useState, useEffect } from "react";
 import taskService from "../../services/taskService";
 import aiService from "../../services/aiService";
+import "./editmodal.css";
+
+const SparkIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2l1.6 6.4L20 10l-6.4 1.6L12 18l-1.6-6.4L4 10l6.4-1.6L12 2Z" />
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 6 6 18M6 6l12 12" />
+  </svg>
+);
+
+const STATUS_OPTIONS = ["Pending", "In Progress", "Completed"];
+const PRIORITY_OPTIONS = ["Low", "Medium", "High"];
 
 const EditTaskModal = ({ task, onClose, onSaved }) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    status: "Pending",
-    priority: "Medium",
-  });
-  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({ title: "", description: "", status: "Pending", priority: "Medium" });
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
   const [saving, setSaving] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     if (task) {
-      setFormData({
-        title: task.title,
-        description: task.description,
-        status: task.status,
-        priority: task.priority,
-      });
+      setFormData({ title: task.title, description: task.description, status: task.status, priority: task.priority });
+      setErrors({});
+      setApiError("");
     }
   }, [task]);
 
@@ -28,135 +37,115 @@ const EditTaskModal = ({ task, onClose, onSaved }) => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
+    setApiError("");
+  };
+
+  const validate = () => {
+    const next = {};
+    if (!formData.title.trim()) next.title = "Title is required";
+    if (!formData.description.trim()) next.description = "Description is required";
+    else if (formData.description.trim().length < 20) next.description = "Min. 20 characters";
+    setErrors(next);
+    return Object.keys(next).length === 0;
   };
 
   const handleGenerateDescription = async () => {
-    if (!formData.title.trim()) return;
+    if (!formData.title.trim()) { setErrors({ title: "Enter a title first" }); return; }
     setAiLoading(true);
     try {
       const description = await aiService.generateDescription(formData.title);
       setFormData((prev) => ({ ...prev, description }));
-    } catch (err) {
-      setError("Couldn't generate a description.");
-    } finally {
-      setAiLoading(false);
-    }
+      setErrors((prev) => ({ ...prev, description: "" }));
+    } catch { setApiError("Couldn't generate description. Try again."); }
+    finally { setAiLoading(false); }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
-    if (formData.description.trim().length < 20) {
-      setError("Description must be at least 20 characters");
-      return;
-    }
-
+    if (!validate()) return;
     setSaving(true);
+    setApiError("");
     try {
       await taskService.updateTask(task._id, formData);
       onSaved();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to update task");
+      setApiError(err.response?.data?.message || "Failed to update task. Try again.");
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div
-      className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-      style={{ background: "rgba(0,0,0,0.5)", zIndex: 1050 }}
-      onClick={onClose}
-    >
-      <div
-        className="card border-0 shadow-lg"
-        style={{ width: "100%", maxWidth: "520px", margin: "1rem" }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="card-body p-4">
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <h5 className="fw-bold mb-0">Edit Task</h5>
-            <button className="btn-close" onClick={onClose}></button>
-          </div>
+    <div className="pmp-modal-overlay" onClick={onClose}>
+      <div className="pmp-modal" onClick={(e) => e.stopPropagation()}>
 
-          {error && <div className="alert alert-danger py-2">{error}</div>}
+        <div className="pmp-modal-header">
+          <h5 className="pmp-modal-title">Edit Task</h5>
+          <button className="pmp-modal-close" onClick={onClose} aria-label="Close"><CloseIcon /></button>
+        </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label className="form-label">Title</label>
+        {apiError && <div className="pmp-modal-error">{apiError}</div>}
+
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="pmp-modal-body">
+
+            <div className="pmp-form-field">
+              <label htmlFor="edit-title">Title <span className="pmp-required">*</span></label>
               <input
-                type="text"
-                name="title"
-                className="form-control"
-                value={formData.title}
-                onChange={handleChange}
-                required
+                id="edit-title" name="title" type="text"
+                className={`pmp-form-input ${errors.title ? "is-invalid" : ""}`}
+                value={formData.title} onChange={handleChange}
+                placeholder="Task title"
               />
+              {errors.title && <span className="pmp-form-error">{errors.title}</span>}
             </div>
 
-            <div className="mb-3">
-              <div className="d-flex justify-content-between align-items-center">
-                <label className="form-label mb-0">Description</label>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-outline-primary"
-                  onClick={handleGenerateDescription}
-                  disabled={aiLoading}
-                >
-                  {aiLoading ? "Generating..." : "✨ Regenerate with AI"}
+            <div className="pmp-form-field">
+              <div className="pmp-form-label-row">
+                <label htmlFor="edit-description">Description <span className="pmp-required">*</span></label>
+                <button type="button" className="pmp-ai-btn" onClick={handleGenerateDescription} disabled={aiLoading}>
+                  <SparkIcon /> {aiLoading ? "Generating..." : "Regenerate with AI"}
                 </button>
               </div>
               <textarea
-                name="description"
-                className="form-control mt-2"
-                rows="4"
-                value={formData.description}
-                onChange={handleChange}
-                required
+                id="edit-description" name="description" rows="4"
+                className={`pmp-form-input pmp-form-textarea ${errors.description ? "is-invalid" : ""}`}
+                value={formData.description} onChange={handleChange}
+                placeholder="Describe what needs to be done..."
               />
+              <div className="pmp-form-hint">
+                <span className={formData.description.trim().length < 20 ? "pmp-hint-warn" : ""}>
+                  {formData.description.trim().length}/20 min chars
+                </span>
+              </div>
+              {errors.description && <span className="pmp-form-error">{errors.description}</span>}
             </div>
 
-            <div className="row">
-              <div className="col-6 mb-3">
-                <label className="form-label">Status</label>
-                <select
-                  name="status"
-                  className="form-select"
-                  value={formData.status}
-                  onChange={handleChange}
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Completed">Completed</option>
+            <div className="pmp-form-row">
+              <div className="pmp-form-field">
+                <label htmlFor="edit-status">Status</label>
+                <select id="edit-status" name="status" className="pmp-form-input pmp-form-select" value={formData.status} onChange={handleChange}>
+                  {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
-
-              <div className="col-6 mb-3">
-                <label className="form-label">Priority</label>
-                <select
-                  name="priority"
-                  className="form-select"
-                  value={formData.priority}
-                  onChange={handleChange}
-                >
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
+              <div className="pmp-form-field">
+                <label htmlFor="edit-priority">Priority</label>
+                <select id="edit-priority" name="priority" className="pmp-form-input pmp-form-select" value={formData.priority} onChange={handleChange}>
+                  {PRIORITY_OPTIONS.map((p) => <option key={p} value={p}>{p}</option>)}
                 </select>
               </div>
             </div>
 
-            <div className="d-flex gap-2">
-              <button type="button" className="btn btn-outline-secondary flex-fill" onClick={onClose}>
-                Cancel
-              </button>
-              <button type="submit" className="btn btn-primary flex-fill" disabled={saving}>
-                {saving ? "Saving..." : "Save Changes"}
-              </button>
-            </div>
-          </form>
-        </div>
+          </div>
+
+          <div className="pmp-modal-footer">
+            <button type="button" className="pmp-modal-cancel" onClick={onClose}>Cancel</button>
+            <button type="submit" className="pmp-modal-save" disabled={saving}>
+              {saving ? <span className="pmp-btn-spinner pmp-btn-spinner-dark" /> : "Save Changes"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -302,3 +302,58 @@ select.pmp-control {
 
 .pmp-profile-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.5rem; align-items: start; }
 @media (max-width: 991px) { .pmp-profile-grid { grid-template-columns: 1fr; } }
+/* ---- Activity Timeline improvements ---- */
+.pmp-activity-group-label {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--pmp-slate-500);
+  padding: 0.6rem 0 0.4rem; list-style: none;
+}
+.pmp-activity-group-label:first-child { padding-top: 0; }
+
+.pmp-activity-verb { font-weight: 600; }
+.pmp-activity-verb.pmp-activity-navy { color: var(--pmp-navy-950); }
+[data-bs-theme="dark"] .pmp-activity-verb.pmp-activity-navy { color: var(--pmp-amber-400); }
+.pmp-activity-verb.pmp-activity-teal { color: var(--pmp-teal-500); }
+.pmp-activity-verb.pmp-activity-green { color: var(--pmp-green-500); }
+.pmp-activity-verb.pmp-activity-red { color: var(--pmp-red-500); }
+
+.pmp-activity-task-name { font-weight: 600; color: var(--pmp-ink-900); }
+
+.pmp-dot-created { background: rgba(11,18,38,0.08); color: var(--pmp-navy-950); }
+[data-bs-theme="dark"] .pmp-dot-created { background: rgba(244,244,246,0.1); color: var(--pmp-ink-900); }
+.pmp-dot-updated { background: rgba(31,156,147,0.14); color: var(--pmp-teal-500); }
+.pmp-dot-completed { background: rgba(46,158,107,0.14); color: var(--pmp-green-500); }
+.pmp-dot-deleted {
+  background: rgba(220,76,76,0.12); color: var(--pmp-red-500);
+  width: 28px; height: 28px; /* slightly larger — destructive action */
+}
+
+.pmp-activity-empty {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 1.5rem 0.5rem; gap: 0.5rem;
+}
+.pmp-activity-empty p { font-weight: 600; color: var(--pmp-ink-900); font-size: 0.9rem; margin: 0; }
+.pmp-activity-empty span { font-size: 0.8rem; color: var(--pmp-slate-500); }
+
+.pmp-activity-show-more {
+  display: block; width: 100%; margin-top: 0.9rem; padding: 0.5rem;
+  background: none; border: 1px dashed var(--pmp-slate-200); border-radius: 8px;
+  color: var(--pmp-slate-500); font-size: 0.8rem; font-weight: 500;
+  cursor: pointer; text-align: center;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.pmp-activity-show-more:hover {
+  border-color: var(--pmp-amber-500); color: var(--pmp-amber-700);
+  background: rgba(242,184,75,0.05);
+}
+[data-bs-theme="dark"] .pmp-activity-show-more:hover { color: var(--pmp-amber-400); }
+/* ---- Fix dashboard filter/sort dropdown options in dark mode ---- */
+.pmp-control option {
+  background-color: #1E2538;
+  color: #F4F4F6;
+}
+
+[data-bs-theme="light"] .pmp-control option {
+  background-color: #ffffff;
+  color: #14171F;
+}
