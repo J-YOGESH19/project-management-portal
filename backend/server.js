@@ -3,7 +3,14 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
 
+// Load environment variables
 dotenv.config();
+
+// Debug: Check if .env is being loaded
+console.log("PORT =", process.env.PORT);
+console.log("MONGO_URI =", process.env.MONGO_URI);
+
+// Connect to MongoDB
 connectDB();
 
 const app = express();
@@ -15,7 +22,7 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Routes will be mounted here as each is built:
+// Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/tasks", require("./routes/taskRoutes"));
 app.use("/api/activity", require("./routes/activityRoutes"));
